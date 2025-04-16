@@ -19,13 +19,13 @@ struct CardModel: Equatable {
         case americanExpress
         case other
         var displayName: String {
-                    switch self {
-                    case .visa: return "Visa"
-                    case .mastercard: return "Mastercard"
-                    case .americanExpress: return "American Express"
-                    case .other: return "Diğer"
-                    }
-                }
+            switch self {
+                case .visa: return "Visa"
+                case .mastercard: return "Mastercard"
+                case .americanExpress: return "American Express"
+                case .other: return "Diğer"
+            }
+        }
     }
     
     var maskedCardNumber: String {
@@ -46,5 +46,5 @@ struct CardModel: Equatable {
     
     static func == (lhs: CardModel, rhs: CardModel) -> Bool {
         return lhs.cardNumber == rhs.cardNumber
-      }
+    }
 }

@@ -9,8 +9,8 @@ import UIKit
 
 
 final class RegisterController: BaseViewController { 
-
-   
+    
+    
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -18,7 +18,7 @@ final class RegisterController: BaseViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
-
+    
     private let registerTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Qeydiyyat"
@@ -26,8 +26,8 @@ final class RegisterController: BaseViewController {
         label.textAlignment = .center
         return label
     }()
-
- 
+    
+    
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Ad"
@@ -54,7 +54,7 @@ final class RegisterController: BaseViewController {
     
     private let emailLabel: UILabel = {
         let label = UILabel()
-        label.text = "Email`:"
+        label.text = "Email:"
         label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         return label
     }()
@@ -75,13 +75,13 @@ final class RegisterController: BaseViewController {
         label.isHidden = true
         return label
     }()
-   
+    
     private let passwordLabel: UILabel = {
-            let label = UILabel()
-            label.text = "Şifrə:"
-            label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-            return label
-        }()
+        let label = UILabel()
+        label.text = "Şifrə:"
+        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        return label
+    }()
     
     private lazy var passwordTextField : CustomTextField =  {
         let t = CustomTextField()
@@ -93,21 +93,20 @@ final class RegisterController: BaseViewController {
     }()
     
     private let passwordErrorLabel: UILabel = {
-           let label = UILabel()
-           label.textColor = .systemRed
-           label.font = UIFont.systemFont(ofSize: 13)
-           label.numberOfLines = 0
-           label.isHidden = true
-           return label
-       }()
-
-    // --- Telefon Numarası ---
+        let label = UILabel()
+        label.textColor = .systemRed
+        label.font = UIFont.systemFont(ofSize: 13)
+        label.numberOfLines = 0
+        label.isHidden = true
+        return label
+    }()
+    
     private let phoneNumberLabel: UILabel = {
-         let label = UILabel()
-         label.text = "Telefon nömrəsi:"
-         label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-         return label
-     }()
+        let label = UILabel()
+        label.text = "Telefon nömrəsi:"
+        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        return label
+    }()
     
     private lazy var phoneNumberTextField:CustomTextField =  {
         let t = CustomTextField()
@@ -119,21 +118,21 @@ final class RegisterController: BaseViewController {
     }()
     
     private let phoneNumberErrorLabel: UILabel = {
-            let label = UILabel()
-            label.textColor = .systemRed
-            label.font = UIFont.systemFont(ofSize: 13)
-            label.numberOfLines = 0
-            label.isHidden = true
-            return label
-        }()
-
-   
+        let label = UILabel()
+        label.textColor = .systemRed
+        label.font = UIFont.systemFont(ofSize: 13)
+        label.numberOfLines = 0
+        label.isHidden = true
+        return label
+    }()
+    
+    
     private let birthDateLabel: UILabel = {
-            let label = UILabel()
-            label.text = "Doğum tarixi:"
-            label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-            return label
-        }()
+        let label = UILabel()
+        label.text = "Doğum tarixi:"
+        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        return label
+    }()
     
     private lazy var birthDateTextField:  CustomTextField = {
         let t = CustomTextField()
@@ -145,15 +144,15 @@ final class RegisterController: BaseViewController {
     }()
     
     private let birthDateErrorLabel: UILabel = {
-              let label = UILabel()
-              label.textColor = .systemRed
-              label.font = UIFont.systemFont(ofSize: 13)
-              label.numberOfLines = 0
-              label.isHidden = true
-              return label
-          }()
-
-   
+        let label = UILabel()
+        label.textColor = .systemRed
+        label.font = UIFont.systemFont(ofSize: 13)
+        label.numberOfLines = 0
+        label.isHidden = true
+        return label
+    }()
+    
+    
     private let datePicker : UIDatePicker = {
         let d = UIDatePicker()
         d.datePickerMode = .date
@@ -163,8 +162,7 @@ final class RegisterController: BaseViewController {
         }
         return d
     }()
-
-    // --- Butonlar ---
+    
     private lazy var registerButton : ResuableButton = {
         let b = ResuableButton()
         b.setTitle("Qeydiyyatdan keçiniz", for: .normal)
@@ -186,30 +184,30 @@ final class RegisterController: BaseViewController {
         stack.spacing = 8
         return stack
     }()
-
+    
     private let phoneNumberPrefix = "+994"
     private let viewModel: RegisterViewModel
     private let dateFormatter = DateFormatter()
-
-
+    
+    
     init(viewModel: RegisterViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         dateFormatter.dateFormat = "dd.MM.yyyy"
     }
-
+    
     @MainActor required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         configureViewModel()
         configureDatePickerToolbar()
-     
+        
     }
-
+    
     override func configureView() {
         super.configureView()
         view.addSubViews(registerTitleLabel,stackView)
@@ -234,13 +232,13 @@ final class RegisterController: BaseViewController {
             UIView(),
             buttonStackView
         )
-
+        
     }
-
+    
     
     override func configureConstraint() {
         super.configureConstraint()
-     
+        
         registerTitleLabel.anchor(
             top: view.safeAreaLayoutGuide.topAnchor,
             leading: view.leadingAnchor,
@@ -257,14 +255,14 @@ final class RegisterController: BaseViewController {
         )
         
     }
-
-   
+    
+    
     override func configureTargets() {
         super.configureTargets()
         loginButton.addTarget(self, action: #selector(loginBtnClicked), for: .touchUpInside)
         registerButton.addTarget(self, action: #selector(registerBtnClicked), for: .touchUpInside)
     }
-
+    
     private func configureViewModel() {
         viewModel.callBack = { [weak self] state in
             guard let self = self else { return }
@@ -272,61 +270,51 @@ final class RegisterController: BaseViewController {
                 case .success:
                     print("")
                 case .error(let error):
-                    showMessage(title: "xeta",message: error)
+                    showMessage(title: "xəta",message: error)
             }
         }
-      
+        
         viewModel.validationUpdateHandler = { [weak self] (type, isValid) in
             guard let self = self else { return }
-             print("Validation Update Received: Type=\(type), isValid=\(isValid)")
-
+            
             DispatchQueue.main.async {
-                let defaultBorderColor = UIColor.lightGray.cgColor
-                let errorBorderColor = UIColor.red.cgColor
-
-                var textFieldToUpdate: CustomTextField?
-                var errorLabelToUpdate: UILabel?
-                var errorMessage: String?
-                var useBorderForError: Bool = true
-
-                switch type {
-                    case .name:
-                        textFieldToUpdate = self.nameTextField
-                        errorLabelToUpdate = self.nameErrorLabel
-                        if !isValid { errorMessage = (self.nameTextField.text ?? "").isEmpty ? "Ad alanı boş buraxılamaz." : "Ad ən az 2 karakter olmalıdır." }
-                case .email:
-                    textFieldToUpdate = self.emailTextField
-                    errorLabelToUpdate = self.emailErrorLabel
-                    if !isValid { errorMessage = (self.emailTextField.text ?? "").isEmpty ? "Eamil alanı boş buraxılamaz." : "Geçərsiz email formatı." }
-                case .password:
-                    textFieldToUpdate = self.passwordTextField
-                    errorLabelToUpdate = self.passwordErrorLabel
-                    if !isValid { errorMessage = (self.passwordTextField.text ?? "").isEmpty ? "Şifrə alanı boş buraxılamaz." : "Şifrə ən az 6 karakter olmalıdır." }
-                case .phoneNumber:
-                    textFieldToUpdate = self.phoneNumberTextField
-                    errorLabelToUpdate = self.phoneNumberErrorLabel
-                    if !isValid { errorMessage = (self.phoneNumberTextField.text ?? "").isEmpty ? "Telefon alanı boş buraxılamaz." : "Geçərsiz format (+994xxxxxxxxx)." }
-                case .birthDate:
-                    textFieldToUpdate = self.birthDateTextField
-                    errorLabelToUpdate = self.birthDateErrorLabel
-                    useBorderForError = false
-                    if !isValid { errorMessage = "Doğum tarixi seçilməlidir." }
-                }
-
+                let defaultColor = UIColor.lightGray.cgColor
+                let errorColor = UIColor.red.cgColor
                 
-                if useBorderForError {
-                    textFieldToUpdate?.layer.borderColor = isValid ? defaultBorderColor : errorBorderColor
-                  
-                } else {
-                     textFieldToUpdate?.layer.borderColor = defaultBorderColor
+                let field: CustomTextField
+                let label: UILabel
+                let value: String?
+                
+                switch type {
+                    case .email:
+                        field = self.emailTextField
+                        label = self.emailErrorLabel
+                        value = self.emailTextField.text
+                    case .password:
+                        field = self.passwordTextField
+                        label = self.passwordErrorLabel
+                        value = self.passwordTextField.text
+                    case .name:
+                        field = self.nameTextField
+                        label = self.nameErrorLabel
+                        value = self.nameTextField.text
+                    case .phoneNumber:
+                        field = self.phoneNumberTextField
+                        label = self.phoneNumberErrorLabel
+                        value = self.phoneNumberTextField.text
+                    case .birthDate:
+                        field = self.birthDateTextField
+                        label = self.birthDateErrorLabel
+                        value = self.birthDateTextField.text
                 }
-
-                errorLabelToUpdate?.text = errorMessage
-                errorLabelToUpdate?.isHidden = isValid
+                
+                field.layer.borderColor = isValid ? defaultColor : errorColor
+                label.text = isValid ? nil : type.errorMessage(for: value ?? "")
+                label.isHidden = isValid
             }
         }
     }
-
+    
     private func configureDatePickerToolbar() {
         let toolbar = UIToolbar()
         toolbar.sizeToFit()
@@ -336,109 +324,98 @@ final class RegisterController: BaseViewController {
         toolbar.setItems([cancelButton, flexSpace, doneButton], animated: false)
         birthDateTextField.inputAccessoryView = toolbar
     }
-
+    
     @objc private func registerBtnClicked() {
         view.endEditing(true)
         let errors = viewModel.validateRegisterCredentials()
-
-      
+        
+        
         updateErrorLabel(for: .name, errors: errors)
         updateErrorLabel(for: .email, errors: errors)
         updateErrorLabel(for: .password, errors: errors)
         updateErrorLabel(for: .phoneNumber, errors: errors)
         updateErrorLabel(for: .birthDate, errors: errors)
-
+        
         if errors.isEmpty {
             viewModel.registerRequest()
         } else {
             let errorMessage = errors.joined(separator: "\n")
-            showMessage(title: "Register Başarısız", message: errorMessage)
+            showMessage(title: "Qeydiyyat ugursuz", message: errorMessage)
         }
     }
-
+    
     @objc private func loginBtnClicked() {
-         
-         print("login button tapped")
+        
+        print("login button tapped")
         viewModel.showLogin()
     }
-
+    
     @objc private func cancelDatePicker() {
         birthDateTextField.resignFirstResponder()
     }
-
+    
     @objc private func doneDatePicker() {
         let selectedDate = datePicker.date
         birthDateTextField.text = dateFormatter.string(from: selectedDate)
         viewModel.updateBirthDate(selectedDate)
         birthDateTextField.resignFirstResponder()
     }
-
+    
     
     private func updateErrorLabel(for type: ValidationTypeRegister, errors: [String]) {
-   
-        var errorLabel: UILabel?
-        var textField: CustomTextField?
-        var errorKeyword: String = ""
-        var useBorderForError: Bool = true
-
-        switch type {
-            case .name:
-                errorLabel = nameErrorLabel; textField = nameTextField; errorKeyword = "ad"
-        case .email:
-            errorLabel = emailErrorLabel; textField = emailTextField; errorKeyword = "email"
-        case .password:
-            errorLabel = passwordErrorLabel; textField = passwordTextField; errorKeyword = "şifrə"
-        case .phoneNumber:
-            errorLabel = phoneNumberErrorLabel; textField = phoneNumberTextField; errorKeyword = "telefon"
-        case .birthDate:
-            errorLabel = birthDateErrorLabel; textField = birthDateTextField; errorKeyword = "doğum"; useBorderForError = false
-        }
-
-        let specificError = errors.first(where: { $0.lowercased().contains(errorKeyword) })
-        DispatchQueue.main.async {
-            errorLabel?.text = specificError
-            errorLabel?.isHidden = (specificError == nil)
-
-            if useBorderForError {
-                 textField?.layer.borderColor = (specificError == nil) ? UIColor.lightGray.cgColor : UIColor.red.cgColor
-               
-            } else {
-                 textField?.layer.borderColor = UIColor.lightGray.cgColor
-               
+        let specificError = errors.first { $0.lowercased().contains(type.errorKeyword) }
+        
+        let mapping: (UILabel, CustomTextField) = {
+            switch type {
+                case .email: return (emailErrorLabel, emailTextField)
+                case .password: return (passwordErrorLabel, passwordTextField)
+                case .name:
+                    return (nameErrorLabel, nameTextField)
+                case .phoneNumber:
+                    return (phoneNumberErrorLabel, phoneNumberTextField)
+                case .birthDate:
+                    return (birthDateErrorLabel, birthDateTextField)
             }
+        }()
+        
+        DispatchQueue.main.async {
+            let (label, field) = mapping
+            label.text = specificError
+            label.isHidden = (specificError == nil)
+            field.layer.borderColor = (specificError == nil) ? UIColor.lightGray.cgColor : UIColor.red.cgColor
         }
     }
-
-  
+    
+    
 }
 
 extension RegisterController: UITextFieldDelegate {
-
-  
+    
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         if textField == phoneNumberTextField {
             if textField.text?.isEmpty ?? true || !(textField.text?.hasPrefix(phoneNumberPrefix) ?? false) {
-                 textField.text = phoneNumberPrefix
+                textField.text = phoneNumberPrefix
                 
-                 viewModel.updateText(textField.text, for: .phoneNumber)
+                viewModel.updateText(textField.text, for: .phoneNumber)
             }
         }
         
-         if textField == birthDateTextField {
-             textField.placeholder = "Tarix seçiliyor..."
-         }
+        if textField == birthDateTextField {
+            textField.placeholder = "Tarix seçiliyor..."
+        }
     }
-
-  
-     func textFieldDidEndEditing(_ textField: UITextField) {
-         if textField == birthDateTextField {
-             if textField.text?.isEmpty ?? true {
-                 textField.placeholder = "Doğum tarixinizi seçin"
-             }
-         }
-     }
-
-
+    
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField == birthDateTextField {
+            if textField.text?.isEmpty ?? true {
+                textField.placeholder = "Doğum tarixinizi seçin"
+            }
+        }
+    }
+    
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == birthDateTextField {
             return false
@@ -455,9 +432,9 @@ extension RegisterController: UITextFieldDelegate {
         }
         return true
     }
-
+    
     func textFieldDidChangeSelection(_ textField: UITextField) {
-      
+        
         if textField == nameTextField {
             viewModel.updateText(textField.text, for: .name)
         } else if textField == emailTextField {
@@ -469,17 +446,17 @@ extension RegisterController: UITextFieldDelegate {
         else if textField == phoneNumberTextField {
             viewModel.updateText(textField.text, for: .phoneNumber)
         }
-    
+        
     }
-
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         switch textField {
-        case nameTextField: passwordTextField.becomeFirstResponder()
-        case emailTextField: passwordTextField.becomeFirstResponder()
-        case passwordTextField: phoneNumberTextField.becomeFirstResponder()
-        case phoneNumberTextField: birthDateTextField.becomeFirstResponder()
-        case birthDateTextField: birthDateTextField.resignFirstResponder() 
-        default: textField.resignFirstResponder()
+            case nameTextField: passwordTextField.becomeFirstResponder()
+            case emailTextField: passwordTextField.becomeFirstResponder()
+            case passwordTextField: phoneNumberTextField.becomeFirstResponder()
+            case phoneNumberTextField: birthDateTextField.becomeFirstResponder()
+            case birthDateTextField: birthDateTextField.resignFirstResponder() 
+            default: textField.resignFirstResponder()
         }
         return true
     }

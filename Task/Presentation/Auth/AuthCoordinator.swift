@@ -28,7 +28,7 @@ final class AuthCoordinator  : Coordinator {
         let controller = LoginController(viewModel: .init(navigation: self,authManager: AuthKeychainManager()))
         showController(vc: controller)
     }
-   
+    
 }
 
 extension AuthCoordinator : AuthNavigation {
@@ -36,7 +36,7 @@ extension AuthCoordinator : AuthNavigation {
     func showLogin() {
         navigationController.popViewController(animated: true)
     }
-
+    
     func showRegister() {
         let controller = RegisterController(
             viewModel: .init(navigation: self,authManager: AuthKeychainManager())

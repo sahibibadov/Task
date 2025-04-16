@@ -21,6 +21,6 @@ final class ProfileViewModel {
         if authManager.deleteUser() {
             navigation?.showLogin()
         }
-       
+        
     }
 }

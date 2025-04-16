@@ -12,15 +12,41 @@ enum ValidationTypeRegister {
     case password
     case phoneNumber
     case birthDate
-  
+    
+    var errorKeyword: String {
+        switch self {
+            case .email: return "email"
+            case .password: return "şifrə"
+            case .name: return "ad"
+            case .phoneNumber: return "telefon"
+            case .birthDate: return "doğum tarixi"
+        }
+    }
+    
+    func errorMessage(for value: String) -> String {
+        switch self {
+            case .email:
+                return value.isEmpty ? "Email alanı boş buraxılamaz." : "Geçərsiz email formatı."
+            case .password:
+                return value.isEmpty ? "Şifrə alanı boş buraxılamaz." : "Şifrə ən az 6 simvol olmalıdır."
+            case .name:
+                return value.isEmpty ? "Ad alanı boş buraxılamaz." : "Ad ən az 2 simvol olmalıdır."
+            case .phoneNumber:
+                return value.isEmpty ? "telefon  nömrəsi boş buraxılamaz." : "Geçərsiz telefon nömrəsi formatı (+994xxxxxxxxx)."
+            case .birthDate:
+                return value.isEmpty ? "Doğum tarixi seçilməlidir.." : ""
+        }
+        
+    }
+    
 }
 final class RegisterViewModel {
     enum ViewState {
-  
+        
         case success
         case error(String)
     }
-
+    
     var nameText: String?
     var emailText: String?
     var passwordText: String?
@@ -45,82 +71,65 @@ final class RegisterViewModel {
     }
     
     func updateText(_ text: String?, for type: ValidationTypeRegister) {
-           let currentText = text ?? ""
-           var isValid = false
-           switch type {
-               case .name:
-                   self.nameText = currentText
-                   isValid = currentText.isNameValid()
-                   self.isNameCurrentlyValid = isValid
-           case .email:
-               self.emailText = currentText
-                   isValid = currentText.isEmailValid()
-               self.isEmailCurrentlyValid = isValid
-           case .password:
-               self.passwordText = currentText
-                   isValid = currentText.isPasswordValid()
-               self.isPasswordCurrentlyValid = isValid
-           case .phoneNumber: // Telefon numarası durumu eklendi
-               self.phoneNumberText = currentText
-                   isValid = currentText.isPhoneNumberValid()
-               self.isPhoneNumberCurrentlyValid = isValid
-               case .birthDate:
-                         
-                          break
-                      }
-                   
-                      if type != .birthDate {
-                           validationUpdateHandler?(type, isValid)
-                      }
-       }
+        let currentText = text ?? ""
+        var isValid = false
+        switch type {
+            case .name:
+                self.nameText = currentText
+                isValid = currentText.isNameValid()
+                self.isNameCurrentlyValid = isValid
+            case .email:
+                self.emailText = currentText
+                isValid = currentText.isEmailValid()
+                self.isEmailCurrentlyValid = isValid
+            case .password:
+                self.passwordText = currentText
+                isValid = currentText.isPasswordValid()
+                self.isPasswordCurrentlyValid = isValid
+            case .phoneNumber:
+                self.phoneNumberText = currentText
+                isValid = currentText.isPhoneNumberValid()
+                self.isPhoneNumberCurrentlyValid = isValid
+            case .birthDate:
+                break
+        }
+        
+        if type != .birthDate {
+            validationUpdateHandler?(type, isValid)
+        }
+    }
     
     private func checkBirthDateSelected(_ date: Date?) -> Bool {
-            return date != nil
-        }
+        return date != nil
+    }
     
     func updateBirthDate(_ date: Date?) {
-           self.birthDate = date
-           let isSelected = checkBirthDateSelected(date)
-           self.isBirthDateSelected = isSelected
-          
-           validationUpdateHandler?(.birthDate, isSelected)
-       }
+        self.birthDate = date
+        let isSelected = checkBirthDateSelected(date)
+        self.isBirthDateSelected = isSelected
+        
+        validationUpdateHandler?(.birthDate, isSelected)
+    }
     
     func validateRegisterCredentials() -> [String] {
-               var errors: [String] = []
-
-            if !isNameCurrentlyValid {
-                if (nameText ?? "").isEmpty { errors.append("Ad alanı boş buraxılamaz.") }
-                else { errors.append("Ad en az 2 karakter olmalıdır.") }
+        var errors: [String] = []
+        
+        let validations: [(ValidationTypeRegister, String?, Bool)] = [
+            (.email, emailText, isEmailCurrentlyValid),
+            (.password, passwordText, isPasswordCurrentlyValid),
+            (.name,  nameText, isNameCurrentlyValid),
+            (.phoneNumber,  phoneNumberText, isPhoneNumberCurrentlyValid),
+            (.birthDate,  nil, isBirthDateSelected),
+        ]
+        
+        for (type, value, isValid) in validations {
+            if !isValid {
+                errors.append(type.errorMessage(for: value ?? ""))
             }
-            
-             
-               if !isEmailCurrentlyValid {
-                    if (emailText ?? "").isEmpty { errors.append("Email alanı boş buraxılamaz.") }
-                    else { errors.append("Geçərsiz email adresi formatı.") }
-               }
-
-              
-               if !isPasswordCurrentlyValid {
-                   if (passwordText ?? "").isEmpty { errors.append("Şifrə alanı boş buraxılamaz.") }
-                   else { errors.append("Şifrə ən az 6 karakter olmalıdır.") }
-               }
-
-             
-               if !isPhoneNumberCurrentlyValid {
-                    if (phoneNumberText ?? "").isEmpty {
-                        errors.append("Telefon nömrəsi alanı boş buraxılamaz.")
-                    } else {
-                      
-                        errors.append("Geçərsiz telefon nömrəsi formatı (+994xxxxxxxxx).")
-                    }
-               }
-            
-                    if !isBirthDateSelected {
-                        errors.append("Doğum tarixi seçilməlidir.")
-                    }
-               return errors
-           }
+        }
+        
+        return errors
+    }
     
     
     
@@ -136,7 +145,7 @@ final class RegisterViewModel {
             password: passwordText,
             phoneNumber: phoneNumberText,
             birthDate: birthDate
-                )
+        )
         
         guard !authManager.isEmailRegistered(emailText) else {
             callBack?(.error("Email artiq movcuddur"))
@@ -144,7 +153,7 @@ final class RegisterViewModel {
         }
         
         if authManager.saveUser(user) {
-                    navigation?.showLogin()
+            navigation?.showLogin()
         }
     }
 }

@@ -21,7 +21,7 @@ final class TransferViewModel {
     var onValidationError: ((String?) -> Void)?
     
     private var cardManager = CardManager.shared
-
+    
     init(navigation: HomeNavigation, cards: [CardModel]) {
         self.navigation = navigation
         self.cards = cards
@@ -32,7 +32,7 @@ final class TransferViewModel {
         }
     }
     
-  
+    
     func selectFromCard(at index: Int) {
         guard index >= 0 && index < cards.count else { return }
         selectedFromAccount = cards[index]
@@ -45,13 +45,13 @@ final class TransferViewModel {
         clearValidationError()
     }
     
-  
+    
     func setAmount(_ amountString: String?) {
         self.transferAmountString = amountString
         clearValidationError()
     }
     
-  
+    
     func getCardsCount() -> Int {
         return cards.count
     }
@@ -75,7 +75,7 @@ final class TransferViewModel {
         return true
     }
     
-  
+    
     private func clearValidationError() {
         onValidationError?(nil)
     }

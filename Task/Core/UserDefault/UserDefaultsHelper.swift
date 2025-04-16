@@ -26,12 +26,12 @@ final class UserDefaultsHelper {
     
     static func setString(key: UserDefaultsKeys, value: String) {
         defaults.setValue(value, forKey: key.rawValue)
-    
+        
     }
     
     static func setInteger(key: UserDefaultsKeys, value: Int) {
         defaults.setValue(value, forKey: key.rawValue)
-       
+        
     }
     
     static func setDouble(key: UserDefaultsKeys, value: Double) {
@@ -41,12 +41,12 @@ final class UserDefaultsHelper {
     
     static func setFloat(key: UserDefaultsKeys, value: Float) {
         defaults.setValue(value, forKey: key.rawValue)
- 
+        
     }
     
     static func setBool(key: UserDefaultsKeys, value: Bool) {
         defaults.setValue(value, forKey: key.rawValue)
-      
+        
     }
     
     

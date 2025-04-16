@@ -8,7 +8,7 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
-
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,7 +66,7 @@ final class TabBarController: UITabBarController {
         let selectedAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.systemBlue
         ]
-
+        
         UITabBarItem.appearance().setTitleTextAttributes(normalAttributes, for: .normal)
         UITabBarItem.appearance().setTitleTextAttributes(selectedAttributes, for: .selected)
     }

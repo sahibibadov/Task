@@ -68,15 +68,15 @@ class ResuableButton: UIButton {
     
     private func configureButton() {
         switch style {
-        case .primary:
-            setColors(normal: .systemBlue, highlighted: .systemBlue.withAlphaComponent(0.8), disabled: .lightGray)
-            setTitleColor(.white, for: .normal)
-        case .secondary:
-            setColors(normal: .systemGray5, highlighted: .systemGray4, disabled: .systemGray6)
-            setTitleColor(.darkGray, for: .normal)
-        case .danger:
-            setColors(normal: .systemRed, highlighted: .systemRed.withAlphaComponent(0.8), disabled: .systemGray)
-            setTitleColor(.white, for: .normal)
+            case .primary:
+                setColors(normal: .systemBlue, highlighted: .systemBlue.withAlphaComponent(0.8), disabled: .lightGray)
+                setTitleColor(.white, for: .normal)
+            case .secondary:
+                setColors(normal: .systemGray5, highlighted: .systemGray4, disabled: .systemGray6)
+                setTitleColor(.darkGray, for: .normal)
+            case .danger:
+                setColors(normal: .systemRed, highlighted: .systemRed.withAlphaComponent(0.8), disabled: .systemGray)
+                setTitleColor(.white, for: .normal)
             case .link:
                 setColors(
                     normal: .clear,
@@ -84,8 +84,8 @@ class ResuableButton: UIButton {
                     disabled: .clear
                 )
                 setTitleColor(.systemBlue, for: .normal)
-        case .custom(let normalColor, let highlightedColor, let disabledColor):
-            setColors(normal: normalColor, highlighted: highlightedColor, disabled: disabledColor)
+            case .custom(let normalColor, let highlightedColor, let disabledColor):
+                setColors(normal: normalColor, highlighted: highlightedColor, disabled: disabledColor)
         }
     }
     

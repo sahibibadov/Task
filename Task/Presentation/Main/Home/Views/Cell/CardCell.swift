@@ -9,7 +9,6 @@ import UIKit
 
 class CardCell: UICollectionViewCell {
     
-    
     private let cardContainer: UIView = {
         let view = UIView()
         view.backgroundColor = .systemGray5

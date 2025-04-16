@@ -10,6 +10,22 @@ import Foundation
 enum ValidationTypeLogin {
     case email
     case password
+    
+    var errorKeyword: String {
+        switch self {
+            case .email: return "email"
+            case .password: return "şifrə"
+        }
+    }
+    
+    func errorMessage(for value: String) -> String {
+        switch self {
+            case .email:
+                return value.isEmpty ? "Email alanı boş buraxılamaz." : "Geçərsiz email formatı."
+            case .password:
+                return value.isEmpty ? "Şifrə alanı boş buraxılamaz." : "Şifrə ən az 6 simvol olmalıdır."
+        }
+    }
 }
 
 final class LoginViewModel {
@@ -20,7 +36,7 @@ final class LoginViewModel {
     
     var emailText: String?
     var passwordText: String?
-
+    
     private(set) var isEmailCurrentlyValid: Bool = false
     private(set) var isPasswordCurrentlyValid: Bool = false
     
@@ -47,26 +63,28 @@ final class LoginViewModel {
                 self.passwordText = currentText
                 isValid = currentText.isPasswordValid()
                 self.isPasswordCurrentlyValid = isValid
- 
+                
         }
         validationUpdateHandler?(type, isValid)
     }
     
     func validateLoginCredentials() -> [String] {
         var errors: [String] = []
-      
-        if !isEmailCurrentlyValid {
-            if (emailText ?? "").isEmpty { errors.append("Email alanı boş buraxılamaz.") }
-            else { errors.append("Geçərsiz email adresi formatı.") }
-        }
         
-        if !isPasswordCurrentlyValid {
-            if (passwordText ?? "").isEmpty { errors.append("Şifrə alanı boş buraxılamaz.") }
-            else { errors.append("Şifrə ən az 6 karakter olmalıdır.") }
+        let validations: [(ValidationTypeLogin, String?, Bool)] = [
+            (.email, emailText, isEmailCurrentlyValid),
+            (.password, passwordText, isPasswordCurrentlyValid)
+        ]
+        
+        for (type, value, isValid) in validations {
+            if !isValid {
+                errors.append(type.errorMessage(for: value ?? ""))
+            }
         }
         
         return errors
     }
+    
     
     func showRegister (){
         navigation?.showRegister()
@@ -76,8 +94,8 @@ final class LoginViewModel {
         guard let passwordText,let emailText else {return}
         guard let user = authManager.getUser() else {
             callBack?(.error("İstifadəci tapilmadı, xahiş olunur qeydiyyatdan keçiniz."))
-                   return
-               }
+            return
+        }
         guard user.email == emailText else {
             callBack?(.error("Email səhfdir"))
             return

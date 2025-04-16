@@ -9,8 +9,7 @@
 import UIKit
 
 final class LoginController: BaseViewController {
-
-   
+    
     private let stackView: UIStackView = {
         let s = UIStackView()
         s.axis = .vertical
@@ -18,8 +17,7 @@ final class LoginController: BaseViewController {
         s.translatesAutoresizingMaskIntoConstraints = false
         return s
     }()
-
- 
+    
     private let loginTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Daxil olun"
@@ -27,7 +25,7 @@ final class LoginController: BaseViewController {
         label.textAlignment = .center
         return label
     }()
-
+    
     private let emailLabel: UILabel = {
         let label = UILabel()
         label.text = "Email"
@@ -52,15 +50,14 @@ final class LoginController: BaseViewController {
         label.isHidden = true
         return label
     }()
-
-    // --- Şifre ---
+    
     private let passwordLabel: UILabel = {
-            let label = UILabel()
-            label.text = "Şifrə:"
-            label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-            return label
-        }()
-
+        let label = UILabel()
+        label.text = "Şifrə:"
+        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        return label
+    }()
+    
     private lazy var passwordTextField : CustomTextField =  {
         let t = CustomTextField()
         t.delegate = self
@@ -71,14 +68,14 @@ final class LoginController: BaseViewController {
     }()
     
     private let passwordErrorLabel: UILabel = {
-           let label = UILabel()
-           label.textColor = .systemRed
-           label.font = UIFont.systemFont(ofSize: 13)
-           label.numberOfLines = 0
-           label.isHidden = true
-           return label
-       }()
-
+        let label = UILabel()
+        label.textColor = .systemRed
+        label.font = UIFont.systemFont(ofSize: 13)
+        label.numberOfLines = 0
+        label.isHidden = true
+        return label
+    }()
+    
     private lazy var loginButton: ResuableButton = {
         let b = ResuableButton()
         b.setTitle("Daxil olun", for: .normal)
@@ -94,45 +91,42 @@ final class LoginController: BaseViewController {
         return b
     }()
     
-    private let buttonStackView: UIStackView = { 
+    private let buttonStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 8
         return stack
     }()
-
+    
     private let viewModel: LoginViewModel
-   
+    
     init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-     
+        
     }
-
+    
     @MainActor required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         configureViewModel()
-       }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
-            super.viewWillAppear(animated)
-            clearTextFields()
-        }
-
+        super.viewWillAppear(animated)
+        clearTextFields()
+    }
     
     override func configureView() {
         super.configureView()
         view.addSubViews(loginTitleLabel, stackView)
-
-     
+        
         buttonStackView.addArrangedSubviews(loginButton, registerButton)
-
-     
+        
         stackView.addArrangedSubviews(
             emailLabel,
             emailTextField,
@@ -143,12 +137,12 @@ final class LoginController: BaseViewController {
             UIView(),
             buttonStackView
         )
-
+        
     }
-
+    
     override func configureConstraint() {
         super.configureConstraint()
-      
+        
         loginTitleLabel.anchor(
             top: view.safeAreaLayoutGuide.topAnchor,
             leading: view.leadingAnchor,
@@ -165,16 +159,15 @@ final class LoginController: BaseViewController {
         )
         
     }
-
-
+    
     override func configureTargets() {
         super.configureTargets()
         loginButton.addTarget(self, action: #selector(loginBtnClicked), for: .touchUpInside)
         registerButton.addTarget(self, action: #selector(registerBtnClicked), for: .touchUpInside)
     }
-
- 
+    
     private func configureViewModel() {
+        
         viewModel.callBack = { [weak self] state in
             guard let self = self else { return }
             switch state {
@@ -185,106 +178,83 @@ final class LoginController: BaseViewController {
             }
         }
         
-      
         viewModel.validationUpdateHandler = { [weak self] (type, isValid) in
             guard let self = self else { return }
-             print("Validation Update Received: Type=\(type), isValid=\(isValid)")
-
+            
             DispatchQueue.main.async {
-                let defaultBorderColor = UIColor.lightGray.cgColor
-                let errorBorderColor = UIColor.red.cgColor
-
-                var textFieldToUpdate: CustomTextField?
-                var errorLabelToUpdate: UILabel?
-                var errorMessage: String?
-                // MARK: TODO
-
+                let defaultColor = UIColor.lightGray.cgColor
+                let errorColor = UIColor.red.cgColor
+                
+                let field: CustomTextField
+                let label: UILabel
+                let value: String?
+                
                 switch type {
-                  
                     case .email:
-                    textFieldToUpdate = self.emailTextField
-                    errorLabelToUpdate = self.emailErrorLabel
-                    if !isValid { errorMessage = (self.emailTextField.text ?? "").isEmpty ? "Email alanı boş buraxılamaz." : "Geçərsiz email formatı." }
+                        field = self.emailTextField
+                        label = self.emailErrorLabel
+                        value = self.emailTextField.text
                     case .password:
-                    textFieldToUpdate = self.passwordTextField
-                    errorLabelToUpdate = self.passwordErrorLabel
-                    if !isValid { errorMessage = (self.passwordTextField.text ?? "").isEmpty ? "Şifrə alanı boş buraxılamaz." : "Şifrə ən az 6 karakter olmalıdır." }
-                
+                        field = self.passwordTextField
+                        label = self.passwordErrorLabel
+                        value = self.passwordTextField.text
                 }
-
-             
-                textFieldToUpdate?.layer.borderColor = isValid ? defaultBorderColor : errorBorderColor
-                    
                 
-
-                errorLabelToUpdate?.text = errorMessage
-                errorLabelToUpdate?.isHidden = isValid
+                field.layer.borderColor = isValid ? defaultColor : errorColor
+                label.text = isValid ? nil : type.errorMessage(for: value ?? "")
+                label.isHidden = isValid
             }
         }
+        
     }
-
     
-
-   
     @objc private func loginBtnClicked() {
         view.endEditing(true)
         let errors = viewModel.validateLoginCredentials()
-
+        
         updateErrorLabel(for: .email, errors: errors)
         updateErrorLabel(for: .password, errors: errors)
- 
+        
         if errors.isEmpty {
-             viewModel.loginRequest()
+            viewModel.loginRequest()
         } else {
             let errorMessage = errors.joined(separator: "\n")
-            showMessage(title: "Login Başarısız", message: errorMessage)
+            showMessage(title: "Login uğursuz", message: errorMessage)
         }
     }
-
+    
     @objc private func registerBtnClicked() {
         viewModel.showRegister()
     }
-
+    
     private func clearTextFields() {
-            emailTextField.text = ""
-            passwordTextField.text = ""
-        }
-
+        emailTextField.text = ""
+        passwordTextField.text = ""
+    }
+    
     private func updateErrorLabel(for type: ValidationTypeLogin, errors: [String]) {
-     
-        var errorLabel: UILabel?
-        var textField: CustomTextField?
-        var errorKeyword: String = ""
-      
-
-        switch type {
-           
-        case .email:
-            errorLabel = emailErrorLabel; textField = emailTextField; errorKeyword = "email"
-        case .password:
-            errorLabel = passwordErrorLabel; textField = passwordTextField; errorKeyword = "şifrə"
-       
-        }
-
-        let specificError = errors.first(where: { $0.lowercased().contains(errorKeyword) })
+        let specificError = errors.first { $0.lowercased().contains(type.errorKeyword) }
+        
+        let mapping: (UILabel, CustomTextField) = {
+            switch type {
+                case .email: return (emailErrorLabel, emailTextField)
+                case .password: return (passwordErrorLabel, passwordTextField)
+            }
+        }()
+        
         DispatchQueue.main.async {
-            errorLabel?.text = specificError
-            errorLabel?.isHidden = (specificError == nil)
-
-          
-                 textField?.layer.borderColor = (specificError == nil) ? UIColor.lightGray.cgColor : UIColor.red.cgColor
-           
+            let (label, field) = mapping
+            label.text = specificError
+            label.isHidden = (specificError == nil)
+            field.layer.borderColor = (specificError == nil) ? UIColor.lightGray.cgColor : UIColor.red.cgColor
         }
     }
-
-  
 }
 
 extension LoginController: UITextFieldDelegate {
-
-
+    
     func textFieldDidChangeSelection(_ textField: UITextField) {
-     
+        
         if textField == emailTextField {
             viewModel.updateText(textField.text, for: .email)
         }
@@ -292,13 +262,12 @@ extension LoginController: UITextFieldDelegate {
             viewModel.updateText(textField.text, for: .password)
         }
     }
-
-  
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         switch textField {
-        case emailTextField: passwordTextField.becomeFirstResponder()
-        case passwordTextField: passwordTextField.resignFirstResponder()
-        default: textField.resignFirstResponder()
+            case emailTextField: passwordTextField.becomeFirstResponder()
+            case passwordTextField: passwordTextField.resignFirstResponder()
+            default: textField.resignFirstResponder()
         }
         return true
     }

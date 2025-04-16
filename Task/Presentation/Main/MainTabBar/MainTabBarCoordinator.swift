@@ -24,7 +24,7 @@ final class MainTabBarCoordinator : Coordinator {
     
     private let tabBarController = TabBarController()
     
- 
+    
     private var homeCoordinator: HomeCoordinator?
     private var profileCoordinator: ProfileCoordinator?
     
@@ -69,7 +69,7 @@ final class MainTabBarCoordinator : Coordinator {
             homeNavController,
             profileNavController
         ]
-    
+        
         navigationController.pushViewController(tabBarController, animated: true)
         
         parentCoordinator?.children

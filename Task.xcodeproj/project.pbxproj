@@ -139,7 +139,6 @@
 				1A29E2D12DAC3FD800556589 /* Core */,
 				1A29E2D52DAC3FEC00556589 /* Main */,
 				1A29E2D42DAC3FE600556589 /* Auth */,
-				1A29E32F2DAE957600556589 /* Model */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -185,6 +184,7 @@
 				1A29E2D62DAC400100556589 /* AuthCoordinator.swift */,
 				1A29E2D72DAC400100556589 /* AuthNavigation.swift */,
 				1A29E2DE2DAC400900556589 /* ViewModules */,
+				1A29E32F2DAE957600556589 /* Model */,
 			);
 			path = Auth;
 			sourceTree = "<group>";

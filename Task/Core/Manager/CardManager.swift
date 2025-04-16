@@ -53,7 +53,7 @@ final class CardManager {
         
         cards[fromCardIndex].amount -= amount
         cards[toCardIndex].amount += amount
-     
+        
         
         NotificationCenter.default.post(name: .cardsDidUpdate, object: nil)
         return true

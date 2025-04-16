@@ -8,7 +8,7 @@
 import UIKit
 
 class CustomTextField: UITextField {
-
+    
     // Colors for different states
     var normalBorderColor: UIColor = .lightGray {
         didSet {

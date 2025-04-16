@@ -1,4 +1,4 @@
- //
+//
 //  HomeViewModel.swift
 //  Task
 //
@@ -29,13 +29,13 @@ final class HomeViewModel {
     }
     
     private func configureObservers() {
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(cardsDidUpdate),
-                name: .cardsDidUpdate,
-                object: nil
-            )
-        }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(cardsDidUpdate),
+            name: .cardsDidUpdate,
+            object: nil
+        )
+    }
     
     @objc private func cardsDidUpdate() {
         cards = cardManager.cards

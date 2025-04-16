@@ -25,14 +25,14 @@ final class AppCoordinator: Coordinator {
         self.window = window
     }
     
-  
+    
     @MainActor
     @objc private func  listener (){
         DispatchQueue.main.async{
             self.start()
         }
     }
-   
+    
     func start() {
         if isLogin {
             showHome()
@@ -61,7 +61,7 @@ final class AppCoordinator: Coordinator {
         mainTabBar.start()
     }
     
-   
+    
 }
 
 extension AppCoordinator : AuthCoordinatorDelegate, MainTabBarCoordinatorDelegate {
@@ -69,10 +69,10 @@ extension AppCoordinator : AuthCoordinatorDelegate, MainTabBarCoordinatorDelegat
         isLogin =  UserDefaultsService.setIsLoggedIn(false)
         start()
     }
-
+    
     func changeRootMain() {
         isLogin =  UserDefaultsService.setIsLoggedIn(true)
         start()
     }
-
+    
 }

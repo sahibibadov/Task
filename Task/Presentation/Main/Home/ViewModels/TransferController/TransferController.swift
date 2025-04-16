@@ -121,7 +121,7 @@ final class TransferController: BaseViewController {
             trailing: view.trailingAnchor,
             padding: UIEdgeInsets(top: 20, left: 20, bottom: 0, right: -20)
         )
-
+        
         fromAccountPicker.anchorSize(.init(width: 0, height: 100))
         toAccountPicker.anchorSize(.init(width: 0, height: 100))
         amountTextField.anchorSize(.init(width: 0, height: 44))

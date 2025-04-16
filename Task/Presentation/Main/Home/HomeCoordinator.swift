@@ -30,14 +30,14 @@ extension HomeCoordinator : HomeNavigation {
     func returnHome() {
         navigationController.popViewController(animated: true)
     }
-
+    
     func showTransfer(cards: [CardModel]) {
         let controller = TransferController(
-                viewModel: .init(navigation: self,cards: cards)
-            )
-            controller.hidesBottomBarWhenPushed =  true
-            showController(vc: controller)
+            viewModel: .init(navigation: self,cards: cards)
+        )
+        controller.hidesBottomBarWhenPushed =  true
+        showController(vc: controller)
     }
-  
-
+    
+    
 }

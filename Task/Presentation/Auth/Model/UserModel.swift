@@ -11,9 +11,9 @@ import Foundation
 
 struct User: Codable {
     let name: String
-       let email: String
-       let password: String
-       let phoneNumber: String
-       let birthDate: Date
-  
+    let email: String
+    let password: String
+    let phoneNumber: String
+    let birthDate: Date
+    
 }
