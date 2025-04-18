@@ -99,7 +99,7 @@ class CardCell: UICollectionViewCell {
         
         bottomStack.addArrangedSubviews(dateLabel,cardTypeLabel)
         
-  
+        
         cardContainer.anchor(
             top: contentView.topAnchor,
             leading: contentView.leadingAnchor,

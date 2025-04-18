@@ -27,7 +27,7 @@ final class AuthKeychainManager: AuthKeychainManagerProtocol {
               let userString = String(data: userData, encoding: .utf8) else {
             return false
         }
-       
+        
         return keychainService.save(service: user.email.lowercased(), data: userString)
     }
     

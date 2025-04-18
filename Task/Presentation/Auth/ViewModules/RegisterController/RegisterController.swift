@@ -292,7 +292,7 @@ final class RegisterController: BaseViewController {
             padding: .init(top: 30, left: 16, bottom: 0, right: -16)
         )
         stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20).isActive = true
-
+        
         stackView.addArrangedSubviews(
             nameLabel,
             nameTextField,
@@ -318,7 +318,7 @@ final class RegisterController: BaseViewController {
         )
         buttonBackgroundViewBottomConstraint = buttonBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
         buttonBackgroundViewBottomConstraint?.isActive = true
-
+        
         buttonStackView.anchor(
             top: buttonBackgroundView.topAnchor,
             leading: buttonBackgroundView.leadingAnchor,

@@ -147,9 +147,9 @@ final class LoginController: BaseViewController {
         view.addSubViews(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubViews(loginTitleLabel, stackView, buttonStackView)
- 
+        
         buttonStackView.addArrangedSubviews(loginButton, registerButton)
-     
+        
         stackView.addArrangedSubviews(
             emailLabel,
             emailTextField,

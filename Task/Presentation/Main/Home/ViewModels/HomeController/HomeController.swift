@@ -184,7 +184,7 @@ final class HomeController: BaseViewController {
         } else {
             showMessage(message:"Card olmadığı üçün silmək mümkün olmadı")
         }
-       
+        
     }
     
     func reloadCollection() {

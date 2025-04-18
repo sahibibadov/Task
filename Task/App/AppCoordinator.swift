@@ -28,12 +28,13 @@ final class AppCoordinator: Coordinator {
     
     @MainActor
     @objc private func  listener (){
-        DispatchQueue.main.async{
+        DispatchQueue.main.async{ [weak self] in
+            guard let self = self else { return }
             self.start()
         }
     }
     
-    func start() {
+    func start() {	
         if isLogin {
             showHome()
         } else {
