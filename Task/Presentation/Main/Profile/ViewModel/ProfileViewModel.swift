@@ -18,9 +18,6 @@ final class ProfileViewModel {
     }
     
     func logOut (){
-        if authManager.deleteUser() {
             navigation?.showLogin()
-        }
-        
     }
 }

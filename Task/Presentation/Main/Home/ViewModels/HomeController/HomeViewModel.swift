@@ -58,7 +58,7 @@ final class HomeViewModel {
         cardManager.addRandomCard()
     }
     
-    func removeLastCard() {
+    func removeLastCard() -> Bool {
         cardManager.removeLastCard()
     }
 }

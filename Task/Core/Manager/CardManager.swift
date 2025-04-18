@@ -38,10 +38,11 @@ final class CardManager {
         NotificationCenter.default.post(name: .cardsDidUpdate, object: nil)
     }
     
-    func removeLastCard() {
-        guard !cards.isEmpty else { return }
+    func removeLastCard() -> Bool {
+        guard !cards.isEmpty else { return false }
         cards.removeLast()
         NotificationCenter.default.post(name: .cardsDidUpdate, object: nil)
+        return true
     }
     
     func makeTransfer(amount: Double, fromCardIndex: Int, toCardIndex: Int) -> Bool {

@@ -8,8 +8,22 @@ import UIKit
 
 
 
-final class RegisterController: BaseViewController { 
+final class RegisterController: BaseViewController {
     
+    
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.alwaysBounceVertical = true
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    private let contentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     private let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -182,13 +196,27 @@ final class RegisterController: BaseViewController {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 8
+        stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
+    }()
+    
+    private let buttonBackgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 16
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.08
+        view.layer.shadowOffset = CGSize(width: 0, height: -2)
+        view.layer.shadowRadius = 8
+        return view
     }()
     
     private let phoneNumberPrefix = "+994"
     private let viewModel: RegisterViewModel
     private let dateFormatter = DateFormatter()
-    
+    private var buttonBackgroundViewBottomConstraint: NSLayoutConstraint?
     
     init(viewModel: RegisterViewModel) {
         self.viewModel = viewModel
@@ -205,14 +233,66 @@ final class RegisterController: BaseViewController {
         view.backgroundColor = .systemBackground
         configureViewModel()
         configureDatePickerToolbar()
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupKeyboardNotifications()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeKeyboardNotifications()
     }
     
     override func configureView() {
         super.configureView()
-        view.addSubViews(registerTitleLabel,stackView)
-        buttonStackView.addArrangedSubviews( registerButton,loginButton)
+        view.addSubViews(scrollView, buttonBackgroundView)
+        buttonBackgroundView.addSubview(buttonStackView)
+        scrollView.addSubview(contentView)
+        contentView.addSubViews(registerTitleLabel, stackView)
+    }
+    
+    
+    override func configureConstraint() {
+        super.configureConstraint()
         
+        scrollView.anchor(
+            top: view.safeAreaLayoutGuide.topAnchor,
+            leading: view.leadingAnchor,
+            bottom: view.bottomAnchor,
+            trailing: view.trailingAnchor
+        )
+        scrollView.contentInset.bottom = buttonBackgroundView.frame.height
+        scrollView.verticalScrollIndicatorInsets.bottom = buttonBackgroundView.frame.height
+        
+        contentView.anchor(
+            top: scrollView.topAnchor,
+            leading: scrollView.leadingAnchor,
+            bottom: scrollView.bottomAnchor,
+            trailing: scrollView.trailingAnchor
+        )
+        contentView.anchorWidth(to: scrollView)
+        
+        let heightConstraint = contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+        heightConstraint.priority = .defaultLow
+        heightConstraint.isActive = true
+        
+        registerTitleLabel.anchor(
+            top: contentView.topAnchor,
+            leading: contentView.leadingAnchor,
+            trailing: contentView.trailingAnchor,
+            padding: .init(top: 30, left: 16, bottom: 0, right: -16)
+        )
+        
+        stackView.anchor(
+            top: registerTitleLabel.bottomAnchor,
+            leading: contentView.leadingAnchor,
+            trailing: contentView.trailingAnchor,
+            padding: .init(top: 30, left: 16, bottom: 0, right: -16)
+        )
+        stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20).isActive = true
+
         stackView.addArrangedSubviews(
             nameLabel,
             nameTextField,
@@ -228,32 +308,26 @@ final class RegisterController: BaseViewController {
             phoneNumberErrorLabel,
             birthDateLabel,
             birthDateTextField,
-            birthDateErrorLabel,
-            UIView(),
-            buttonStackView
+            birthDateErrorLabel
         )
         
-    }
-    
-    
-    override func configureConstraint() {
-        super.configureConstraint()
-        
-        registerTitleLabel.anchor(
-            top: view.safeAreaLayoutGuide.topAnchor,
+        buttonBackgroundView.anchor(
             leading: view.leadingAnchor,
             trailing: view.trailingAnchor,
-            padding: .init(top: 20, left: 16, bottom: 0, right: -16)
+            widthGreaterThanOrEqualToConstant: 90
+        )
+        buttonBackgroundViewBottomConstraint = buttonBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+        buttonBackgroundViewBottomConstraint?.isActive = true
+
+        buttonStackView.anchor(
+            top: buttonBackgroundView.topAnchor,
+            leading: buttonBackgroundView.leadingAnchor,
+            bottom: buttonBackgroundView.bottomAnchor,
+            trailing: buttonBackgroundView.trailingAnchor,
+            padding: .init(top: 20, left: 16, bottom: -20, right: -16)
         )
         
-        stackView.anchor(
-            top: registerTitleLabel.bottomAnchor,
-            leading: view.leadingAnchor,
-            bottom: view.safeAreaLayoutGuide.bottomAnchor,
-            trailing: view.trailingAnchor,
-            padding: .init(top: 30, left: 16, bottom: -10, right: -16)
-        )
-        
+        buttonStackView.addArrangedSubviews(registerButton, loginButton)
     }
     
     
@@ -387,6 +461,50 @@ final class RegisterController: BaseViewController {
     }
     
     
+    private func setupKeyboardNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    
+    private func removeKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc private func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+              let keyboardAnimationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else { return }
+        
+        let keyboardHeight = keyboardFrame.height
+        buttonBackgroundViewBottomConstraint?.constant = -keyboardHeight
+        let totalBottom = keyboardHeight + buttonBackgroundView.frame.height
+        scrollView.contentInset.bottom = totalBottom
+        scrollView.verticalScrollIndicatorInsets.bottom = totalBottom
+        UIView.animate(withDuration: keyboardAnimationDuration) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc private func keyboardWillHide(notification: NSNotification) {
+        let keyboardAnimationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double ?? 0.3
+        buttonBackgroundViewBottomConstraint?.constant = 0
+        scrollView.contentInset.bottom = buttonBackgroundView.frame.height
+        scrollView.verticalScrollIndicatorInsets.bottom = buttonBackgroundView.frame.height
+        UIView.animate(withDuration: keyboardAnimationDuration) {
+            self.view.layoutIfNeeded()
+        }
+    }
 }
 
 extension RegisterController: UITextFieldDelegate {
@@ -455,7 +573,7 @@ extension RegisterController: UITextFieldDelegate {
             case emailTextField: passwordTextField.becomeFirstResponder()
             case passwordTextField: phoneNumberTextField.becomeFirstResponder()
             case phoneNumberTextField: birthDateTextField.becomeFirstResponder()
-            case birthDateTextField: birthDateTextField.resignFirstResponder() 
+            case birthDateTextField: birthDateTextField.resignFirstResponder()
             default: textField.resignFirstResponder()
         }
         return true

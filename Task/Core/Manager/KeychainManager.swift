@@ -9,8 +9,8 @@ import  Foundation
 
 protocol AuthKeychainManagerProtocol {
     func saveUser(_ user: User) -> Bool
-    func getUser() -> User?
-    func deleteUser() -> Bool
+    func getUser(email: String) -> User?
+    func deleteUser(email: String) -> Bool
     func isEmailRegistered(_ email: String) -> Bool
 }
 
@@ -27,26 +27,24 @@ final class AuthKeychainManager: AuthKeychainManagerProtocol {
               let userString = String(data: userData, encoding: .utf8) else {
             return false
         }
-        
-        return keychainService.save(service: "currentUser", data: userString)
+       
+        return keychainService.save(service: user.email.lowercased(), data: userString)
     }
     
-    func getUser() -> User? {
-        guard let userString = keychainService.load(service: "currentUser"),
+    func getUser(email: String) -> User? {
+        guard let userString = keychainService.load(service: email.lowercased()),
               let userData = userString.data(using: .utf8) else {
             return nil
         }
-        
         let decoder = JSONDecoder()
         return try? decoder.decode(User.self, from: userData)
     }
     
-    func deleteUser() -> Bool {
-        return keychainService.delete(service: "currentUser")
+    func deleteUser(email: String) -> Bool {
+        return keychainService.delete(service: email.lowercased())
     }
     
     func isEmailRegistered(_ email: String) -> Bool {
-        guard let user = getUser() else { return false }
-        return user.email.lowercased() == email.lowercased()
+        return getUser(email: email) != nil
     }
 }

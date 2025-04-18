@@ -5,10 +5,23 @@
 //  Created by Sahib on 14.04.25.
 //
 
-
 import UIKit
 
 final class LoginController: BaseViewController {
+    
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.alwaysBounceVertical = true
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    private let contentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     private let stackView: UIStackView = {
         let s = UIStackView()
@@ -98,6 +111,8 @@ final class LoginController: BaseViewController {
         return stack
     }()
     
+    private var buttonStackViewBottomConstraint: NSLayoutConstraint?
+    
     private let viewModel: LoginViewModel
     
     init(viewModel: LoginViewModel) {
@@ -119,14 +134,22 @@ final class LoginController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         clearTextFields()
+        setupKeyboardNotifications()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeKeyboardNotifications()
     }
     
     override func configureView() {
         super.configureView()
-        view.addSubViews(loginTitleLabel, stackView)
-        
+        view.addSubViews(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubViews(loginTitleLabel, stackView, buttonStackView)
+ 
         buttonStackView.addArrangedSubviews(loginButton, registerButton)
-        
+     
         stackView.addArrangedSubviews(
             emailLabel,
             emailTextField,
@@ -134,30 +157,53 @@ final class LoginController: BaseViewController {
             passwordLabel,
             passwordTextField,
             passwordErrorLabel,
-            UIView(),
-            buttonStackView
+            UIView()
         )
-        
     }
     
     override func configureConstraint() {
         super.configureConstraint()
         
-        loginTitleLabel.anchor(
+        scrollView.anchor(
             top: view.safeAreaLayoutGuide.topAnchor,
             leading: view.leadingAnchor,
-            trailing: view.trailingAnchor,
-            padding: .init(top: 20, left: 16, bottom: 0, right: -16)
+            bottom: view.bottomAnchor,
+            trailing: view.trailingAnchor
+        )
+        
+        contentView.anchor(
+            top: scrollView.topAnchor,
+            leading: scrollView.leadingAnchor,
+            bottom: scrollView.bottomAnchor,
+            trailing: scrollView.trailingAnchor
+        )
+        contentView.anchorWidth(to: scrollView)
+        
+        let heightConstraint = contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+        heightConstraint.priority = .defaultLow
+        heightConstraint.isActive = true
+        
+        loginTitleLabel.anchor(
+            top: contentView.topAnchor,
+            leading: contentView.leadingAnchor,
+            trailing: contentView.trailingAnchor,
+            padding: .init(top: 30, left: 16, bottom: 0, right: -16)
         )
         
         stackView.anchor(
             top: loginTitleLabel.bottomAnchor,
-            leading: view.leadingAnchor,
-            bottom: view.safeAreaLayoutGuide.bottomAnchor,
-            trailing: view.trailingAnchor,
-            padding: .init(top: 30, left: 16, bottom: -10, right: -16)
+            leading: contentView.leadingAnchor,
+            trailing: contentView.trailingAnchor,
+            padding: .init(top: 30, left: 16, bottom: 0, right: -16)
         )
         
+        buttonStackView.anchor(
+            leading: contentView.leadingAnchor,
+            trailing: contentView.trailingAnchor,
+            padding: .init(top: 0, left: 16, bottom: 0, right: -16)
+        )
+        buttonStackViewBottomConstraint = buttonStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30)
+        buttonStackViewBottomConstraint?.isActive = true
     }
     
     override func configureTargets() {
@@ -248,6 +294,50 @@ final class LoginController: BaseViewController {
             label.isHidden = (specificError == nil)
             field.layer.borderColor = (specificError == nil) ? UIColor.lightGray.cgColor : UIColor.red.cgColor
         }
+    }
+    
+    private func setupKeyboardNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    
+    private func removeKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc private func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+              let keyboardAnimationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else { return }
+        
+        let keyboardHeight = keyboardFrame.height
+        buttonStackViewBottomConstraint?.constant = -keyboardHeight - 10 // 10px boşluq
+        UIView.animate(withDuration: keyboardAnimationDuration) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc private func keyboardWillHide(notification: NSNotification) {
+        let keyboardAnimationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double ?? 0.3
+        buttonStackViewBottomConstraint?.constant = -30 // Orijinal dəyər
+        UIView.animate(withDuration: keyboardAnimationDuration) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    private func findFirstResponder() -> UIView? {
+        return view.findFirstResponder()
     }
 }
 

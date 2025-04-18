@@ -92,7 +92,7 @@ final class LoginViewModel {
     
     func loginRequest (){
         guard let passwordText,let emailText else {return}
-        guard let user = authManager.getUser() else {
+        guard let user = authManager.getUser(email: emailText) else {
             callBack?(.error("İstifadəci tapilmadı, xahiş olunur qeydiyyatdan keçiniz."))
             return
         }

@@ -224,7 +224,7 @@ extension TransferController: UITextFieldDelegate {
         
         if string.isEmpty { return true }
         
-        let decimalSeparator = Locale.current.decimalSeparator ?? "."
+        let decimalSeparator = "."
         let allowedCharacters = CharacterSet(charactersIn: "0123456789").union(CharacterSet(charactersIn: decimalSeparator))
         
         if string.rangeOfCharacter(from: allowedCharacters.inverted) != nil {

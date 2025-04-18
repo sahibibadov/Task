@@ -40,6 +40,7 @@ enum ValidationTypeRegister {
     }
     
 }
+
 final class RegisterViewModel {
     enum ViewState {
         
@@ -106,9 +107,18 @@ final class RegisterViewModel {
     func updateBirthDate(_ date: Date?) {
         self.birthDate = date
         let isSelected = checkBirthDateSelected(date)
-        self.isBirthDateSelected = isSelected
-        
-        validationUpdateHandler?(.birthDate, isSelected)
+        var isOfAge = false
+        if let birthDate = date {
+            let calendar = Calendar.current
+            let now = Date()
+            if let age = calendar.dateComponents([.year], from: birthDate, to: now).year, age >= 18 {
+                isOfAge = true
+            } else {
+                callBack?(.error("18 yaşdan kiçik istifadəçi qeydiyyatdan keçə bilməz"))
+            }
+        }
+        self.isBirthDateSelected = isSelected && isOfAge
+        validationUpdateHandler?(.birthDate, self.isBirthDateSelected)
     }
     
     func validateRegisterCredentials() -> [String] {

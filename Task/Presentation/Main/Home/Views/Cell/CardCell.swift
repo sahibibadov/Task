@@ -57,8 +57,8 @@ class CardCell: UICollectionViewCell {
     private let stackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = 8
-        stack.distribution = .fillEqually
+        stack.spacing = 12
+        stack.distribution = .fill
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -66,13 +66,14 @@ class CardCell: UICollectionViewCell {
     private let topStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
+        stack.spacing = 8
         return stack
     }()
     
     private let bottomStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.distribution = .fill
+        stack.distribution = .equalSpacing
         return stack
     }()
     
@@ -90,29 +91,30 @@ class CardCell: UICollectionViewCell {
     private func configureCell() {
         contentView.backgroundColor = .clear
         contentView.addSubview(cardContainer)
-        stackView.addArrangedSubviews(topStack, bottomStack)
-        topStack.addArrangedSubviews(cardNumberLabel, amountLabel)
-        bottomStack.addArrangedSubviews(dateLabel, cardTypeLabel)
-        
         cardContainer.addSubview(stackView)
         
+        stackView.addArrangedSubviews(topStack,bottomStack)
+        
+        topStack.addArrangedSubviews(cardNumberLabel,amountLabel)
+        
+        bottomStack.addArrangedSubviews(dateLabel,cardTypeLabel)
+        
+  
         cardContainer.anchor(
             top: contentView.topAnchor,
             leading: contentView.leadingAnchor,
             bottom: contentView.bottomAnchor,
             trailing: contentView.trailingAnchor,
-            padding: UIEdgeInsets(top: 8, left: 16, bottom: -8, right: -16)
+            padding: .init(top: 8, left: 16, bottom: -8, right: -16)
         )
-        
         
         stackView.anchor(
             top: cardContainer.topAnchor,
             leading: cardContainer.leadingAnchor,
             bottom: cardContainer.bottomAnchor,
             trailing: cardContainer.trailingAnchor,
-            padding: UIEdgeInsets(top: 16, left: 16, bottom: -8, right: -16)
+            padding: .init(top: 16, left: 16, bottom: -16, right: -16)
         )
-        
     }
     
     func configure(with card: CardModel) {

@@ -26,6 +26,16 @@ final class HomeController: BaseViewController {
         return cv
     }()
     
+    private lazy var pageControl: UIPageControl = {
+        let pageControl = UIPageControl()
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        pageControl.currentPageIndicatorTintColor = .systemBlue
+        pageControl.pageIndicatorTintColor = .systemGray4
+        pageControl.hidesForSinglePage = false
+        pageControl.addTarget(self, action: #selector(pageControlValueChanged), for: .valueChanged)
+        return pageControl
+    }()
+    
     private let buttonStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -62,7 +72,6 @@ final class HomeController: BaseViewController {
         return btn
     }()
     
-    
     private let viewModel: HomeViewModel
     
     init(viewModel: HomeViewModel) {
@@ -70,7 +79,6 @@ final class HomeController: BaseViewController {
         super.init(nibName: nil, bundle: nil)
         
     }
-    
     
     @MainActor required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -85,7 +93,7 @@ final class HomeController: BaseViewController {
     
     override func configureView() {
         super.configureView()
-        view.addSubViews(collection,buttonStackView)
+        view.addSubViews(collection, pageControl, buttonStackView)
         buttonStackView.addArrangedSubviews(addButton,transferButton,deleteButton)
     }
     
@@ -95,16 +103,23 @@ final class HomeController: BaseViewController {
         collection.anchor(
             top: view.safeAreaLayoutGuide.topAnchor,
             leading: view.leadingAnchor,
-            trailing: view.trailingAnchor,
+            trailing: view.trailingAnchor
         )
         collection.anchorSize(.init(width: 0, height: 220))
-        buttonStackView.anchor(
+        
+        // Page Control Constraints
+        pageControl.anchor(
             top: collection.bottomAnchor,
+            padding: .init(top: 8, left: 0, bottom: 0, right: 0)
+        )
+        pageControl.centerXToSuperview()
+        
+        buttonStackView.anchor(
+            top: pageControl.bottomAnchor,
             leading: view.leadingAnchor,
             trailing: view.trailingAnchor,
-            padding: .init(top: 40,leading: 60, trailing: -60)
+            padding: .init(top: 20, left: 60, bottom: 0, right: -60)
         )
-        
     }
     
     override func configureTargets() {
@@ -129,10 +144,26 @@ final class HomeController: BaseViewController {
         }
     }
     
+    private func updatePageControl() {
+        pageControl.numberOfPages = viewModel.getCardsCount()
+        if viewModel.getCardsCount() > 0 {
+            let visibleRect = CGRect(origin: collection.contentOffset, size: collection.bounds.size)
+            let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
+            if let visibleIndexPath = collection.indexPathForItem(at: visiblePoint) {
+                pageControl.currentPage = visibleIndexPath.item
+            }
+        }
+    }
+    
+    @objc private func pageControlValueChanged() {
+        let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
+        collection.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+    }
+    
     @objc
     fileprivate func addCard (){
         viewModel.addRandomCard()
-        showMessage(title: "Card elave olundu")
+        showMessage(message: "Card elave olundu")
         reloadCollection()
     }
     
@@ -147,19 +178,30 @@ final class HomeController: BaseViewController {
     
     @objc
     fileprivate func deleteCArd (){
-        viewModel.removeLastCard()
-        showMessage(title: "Card silindi olundu")
-        reloadCollection()
+        if viewModel.removeLastCard() {
+            showMessage(message:"Card silindi")
+            reloadCollection()
+        } else {
+            showMessage(message:"Card olmadığı üçün silmək mümkün olmadı")
+        }
+       
     }
     
-    func reloadCollection (){
+    func reloadCollection() {
         DispatchQueue.main.async {
             self.collection.reloadData()
+            self.updatePageControl()
         }
-        
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        updatePageControl()
+    }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        updatePageControl()
     }
 }
-
 
 extension HomeController : UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout  {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -183,5 +225,4 @@ extension HomeController : UICollectionViewDelegate, UICollectionViewDataSource,
         let newPageNumber = Int(round(targetXContentOffset / pageWidth))
         targetContentOffset.pointee = CGPoint(x: CGFloat(newPageNumber) * pageWidth, y: targetContentOffset.pointee.y)
     }
-    
 }
