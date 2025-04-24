@@ -22,6 +22,7 @@ final class AuthCoordinator  : Coordinator {
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
+        self.navigationController.setNavigationBarHidden(false, animated: true)
     }
     
     func start() {

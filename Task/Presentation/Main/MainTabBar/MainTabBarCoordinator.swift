@@ -32,6 +32,7 @@ final class MainTabBarCoordinator : Coordinator {
         navigationController : UINavigationController
     ) {
         self.navigationController = navigationController
+        self.navigationController.setNavigationBarHidden(true, animated: true)
     }
     
     func start() {
@@ -47,22 +48,18 @@ final class MainTabBarCoordinator : Coordinator {
         let homeNavController = UINavigationController()
         homeCoordinator = HomeCoordinator(navigationController: homeNavController)
         homeCoordinator?.parentCoordinator = parentCoordinator
-        let homeItem = UITabBarItem()
-        homeItem.title = "Home"
-        homeItem.image = UIImage(systemName: "house")
-        homeItem.selectedImage = UIImage(systemName: "house.fill")
-        homeNavController.tabBarItem = homeItem
+        if let homeIcon = UIImage(systemName: "house"), let homeIconSelected = UIImage(systemName: "house.fill") {
+            homeNavController.tabBarItem = UITabBarItem(title: "Home", image: homeIcon, selectedImage: homeIconSelected)
+        }
         
         //profile
         let profileNavController = UINavigationController()
         profileCoordinator = ProfileCoordinator(navigationController: profileNavController)
         profileCoordinator?.parentCoordinator = parentCoordinator
         profileCoordinator?.delegate = self
-        let favItem = UITabBarItem()
-        favItem.title = "Profile"
-        favItem.image = UIImage(systemName: "person")
-        favItem.selectedImage = UIImage(systemName: "person.fill")
-        profileNavController.tabBarItem = favItem
+        if let profileIcon = UIImage(systemName: "person"), let profileIconSelected = UIImage(systemName: "person.fill") {
+            profileNavController.tabBarItem = UITabBarItem(title: "Profile", image: profileIcon, selectedImage: profileIconSelected)
+        }
         
         
         tabBarController.viewControllers = [
